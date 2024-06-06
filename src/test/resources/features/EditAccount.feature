@@ -1,5 +1,6 @@
 Feature: Edit account
 
+  @edit
   Scenario: Modify an account created
     Given actor is on dashboard accounts
     And Click on edit account

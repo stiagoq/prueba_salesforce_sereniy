@@ -1,5 +1,6 @@
 Feature: Create a new account
 
+  @create
   Scenario: Create account on salesforce page
     Given actor is on the home page
     When goes to account functionality and click on new
