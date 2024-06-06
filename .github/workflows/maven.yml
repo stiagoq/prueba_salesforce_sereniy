@@ -34,12 +34,7 @@ jobs:
       if: success() || failure()
       with:
           name: Serenity Report                 # Name of the folder
-          path: target/site/serenity/
-
-    - name: Download an artifact
-      uses: actions/download-artifact@v4
-      with: 
-        name: serenity_report
+          path: target/site/serenity/index.html
 
    
     
