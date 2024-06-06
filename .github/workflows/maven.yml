@@ -4,14 +4,41 @@
 name: Serenity Tests in GitHub
   
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Prueba a correr"
+        required: true
+        default: 'RunnerAllFeatures'
+        type: choice
+        options:
+        - RunnerAllFeatures
+        - RunCreateAccountFeature
+        - RunEditAccountFeature
+
+      tags_in_scenario:
+        description: "Desea ejecutar con tags"
+        required: false
+        type: boolean
+       
+      
+      
+      scenario:
+      if: ${{ inputs.tags_in_scenario == true }}
+      description: "Desea ejecutar con tags"
+      required: false
+      type: boolean
+      
+        
+  #push:
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
   
 jobs:
   build:
-  
+  #env:
+    
     runs-on: ubuntu-latest
   
     steps:
@@ -25,9 +52,10 @@ jobs:
  
     - uses: browser-actions/setup-chrome@latest
     - run: chrome --version
-     
+
+      #if: ${{ inputs.tags_in_scenario == true }}
     - name: Build with Maven
-      run: mvn clean verify -Dtest=RunAllFeatures serenity:aggregate serenity:check  
+      run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check  
         
     - name: Test Report Generation
       uses: actions/upload-artifact@v4
@@ -35,8 +63,6 @@ jobs:
       with:
           name: Serenity Report                 # Name of the folder
           path: target/site/serenity/
-          
-
 
    
     
