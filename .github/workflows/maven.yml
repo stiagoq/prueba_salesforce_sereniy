@@ -54,11 +54,11 @@ jobs:
     - uses: browser-actions/setup-chrome@latest
     - run: chrome --version
 
-      if: ${{ inputs.tags_in_scenario == false }}
+      if: ${{ inputs.tags_in_scenario == true }}
     - name: Build with Maven
       run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check 
 
-      if: ${{ inputs.tags_in_scenario == true }}
+      if: ${{ inputs.tags_in_scenario == false }}
     - name: Build with Maven with tags
       run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
         
