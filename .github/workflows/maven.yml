@@ -11,7 +11,6 @@ on:
         description: "Prueba a correr"
         required: true
         type: choise
-        default: "Todas"
         options:
         - RunnerAllFeatures
         - RunCreateAccountFeature
@@ -19,19 +18,8 @@ on:
 
       tags_in_scenario:
         description: "Desea ejecutar con tags"
-        required: true
+        required: false
         type: boolean
-
-      if: ${{ inputs.tags_in_scenario == 'true' }}
-      inputs:
-      tags:
-        description: "Seleccion tag"
-        required: true
-        type: choise
-        default: "Todas"
-        options:
-        - create
-        - Edit
        
         
         
