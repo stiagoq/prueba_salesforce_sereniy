@@ -50,7 +50,7 @@ jobs:
 
       
     - name: Build with Maven
-      if: ${{ inputs.tags_in_scenario == "true" }}
+      #if: ${{ inputs.tags_in_scenario == "true" }}
       run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check  
         
     - name: Test Report Generation
