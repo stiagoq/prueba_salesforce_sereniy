@@ -5,15 +5,37 @@ name: Serenity Tests in GitHub
   
 on:
   workflow_dispatch:
+  
     inputs:
       runner:
         description: "Prueba a correr"
         required: true
+        type: choise
         default: "Todas"
         options:
         - RunnerAllFeatures
         - RunCreateAccountFeature
         - RunEditAccountFeature
+
+      tags_in_scenario:
+        description: "Desea ejecutar con tags"
+        required: true
+        type: boolean
+
+      if: ${{ inputs.tags_in_scenario == 'true' }}
+      inputs:
+      tags:
+        description: "Seleccion tag"
+        required: true
+        type: choise
+        default: "Todas"
+        options:
+        - create
+        - Edit
+       
+        
+        
+        
         
   #push:
     #branches: [ "main" ]
