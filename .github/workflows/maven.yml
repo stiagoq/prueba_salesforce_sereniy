@@ -4,14 +4,26 @@
 name: Serenity Tests in GitHub
   
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Prueba a correr"
+        required: true
+        default: "Todas"
+        options:
+        - RunnerAllFeatures
+        - RunCreateAccountFeature
+        - RunEditAccountFeature
+        
+  #push:
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
   
 jobs:
   build:
-  
+  #env:
+    
     runs-on: ubuntu-latest
   
     steps:
@@ -27,11 +39,11 @@ jobs:
     - run: chrome --version
      
     - name: Build with Maven
-      run: mvn clean verify -Dtest=RunAllFeatures serenity:aggregate serenity:check  
+      run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check  
         
     - name: Test Report Generation
       uses: actions/upload-artifact@v4
-      if: always()
+      if: success() || failure()
       with:
           name: Serenity Report                 # Name of the folder
           path: target/site/serenity/
