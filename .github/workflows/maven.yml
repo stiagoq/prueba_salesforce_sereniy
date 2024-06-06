@@ -18,7 +18,7 @@ on:
 
       tags_in_scenario:
         description: "Desea ejecutar con tags"
-        required: false
+        required: true
         type: boolean
        
       runnerTag:
