@@ -21,13 +21,14 @@ on:
         required: false
         type: boolean
        
-      
-      
-      scenario:
-      if: ${{ inputs.tags_in_scenario == true }}
-      description: "Desea ejecutar con tags"
-      required: false
-      type: boolean
+      runnerTag:
+        description: "Prueba a correr"
+        required: true
+        default: 'create'
+        type: choice
+        options:
+        - create
+        - edit
       
         
   #push:
@@ -53,9 +54,13 @@ jobs:
     - uses: browser-actions/setup-chrome@latest
     - run: chrome --version
 
-      #if: ${{ inputs.tags_in_scenario == true }}
+      if: ${{ inputs.tags_in_scenario == false }}
     - name: Build with Maven
-      run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check  
+      run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check 
+
+      if: ${{ inputs.tags_in_scenario == false }}
+    - name: Build with Maven with tags
+      run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
         
     - name: Test Report Generation
       uses: actions/upload-artifact@v4
