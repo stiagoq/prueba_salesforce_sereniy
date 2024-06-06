@@ -21,9 +21,13 @@ on:
         required: false
         type: boolean
        
-        
-        
-        
+      if: ${{ inputs.tags_in_scenario == true }}
+      
+      scenario:
+      description: "Desea ejecutar con tags"
+      required: false
+      type: boolean
+      
         
   #push:
     #branches: [ "main" ]
@@ -48,7 +52,7 @@ jobs:
     - uses: browser-actions/setup-chrome@latest
     - run: chrome --version
 
-      if: ${{ inputs.tags_in_scenario == true }}
+      #if: ${{ inputs.tags_in_scenario == true }}
     - name: Build with Maven
       run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check  
         
