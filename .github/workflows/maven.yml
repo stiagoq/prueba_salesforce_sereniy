@@ -21,9 +21,10 @@ on:
         required: false
         type: boolean
        
-      if: ${{ inputs.tags_in_scenario == true }}
+      
       
       scenario:
+      if: ${{ inputs.tags_in_scenario == true }}
       description: "Desea ejecutar con tags"
       required: false
       type: boolean
