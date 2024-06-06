@@ -5,12 +5,12 @@ name: Serenity Tests in GitHub
   
 on:
   workflow_dispatch:
-  
     inputs:
       runner:
         description: "Prueba a correr"
         required: true
-        type: choise
+        default: 'RunnerAllFeatures'
+        type: choice
         options:
         - RunnerAllFeatures
         - RunCreateAccountFeature
