@@ -58,11 +58,7 @@ jobs:
         uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
-  runner_test:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
+      steps:
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ inputs.tags_in_scenario }}
         run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
@@ -78,5 +74,11 @@ jobs:
           name: Serenity Report
           path: target/site/serenity/
 
+
+  #runner_test:
+    #needs: build
+    #runs-on: ubuntu-latest
+
+    
     
           
