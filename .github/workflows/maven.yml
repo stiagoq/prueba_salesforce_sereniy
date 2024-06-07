@@ -68,6 +68,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Build with Maven if tags_in_scenario is true
+        if: ${{ inputs.tags_in_scenario }}
+        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
+        
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ !inputs.tags_in_scenario }}
         run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
