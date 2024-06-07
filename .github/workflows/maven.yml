@@ -58,39 +58,25 @@ jobs:
         uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
-  runner_test:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ inputs.tags_in_scenario }}
         run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
-
+  
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ !inputs.tags_in_scenario }}
         run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
-
+  
       - name: Test Report Generation
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Serenity Report
           path: target/site/serenity/
+
+  #runner_test:
+   # needs: build
+    #runs-on: ubuntu-latest
+
+    
+
+     
