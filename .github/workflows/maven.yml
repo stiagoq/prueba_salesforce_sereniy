@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
 name: Serenity Tests in GitHub
-  
+
 on:
   workflow_dispatch:
     inputs:
@@ -12,68 +12,70 @@ on:
         default: 'RunnerAllFeatures'
         type: choice
         options:
-        - RunnerAllFeatures
-        - RunCreateAccountFeature
-        - RunEditAccountFeature
+          - RunnerAllFeatures
+          - RunCreateAccountFeature
+          - RunEditAccountFeature
 
       tags_in_scenario:
         description: "Desea ejecutar con tags"
         required: true
         type: boolean
-       
+
       runnerTag:
         description: "Prueba a correr"
         required: true
         default: 'create'
         type: choice
         options:
-        - create
-        - edit
-      
-        
-  #push:
-    #branches: [ "main" ]
-  #pull_request:
-    #branches: [ "main" ]
-  
+          - create
+          - edit
+
 jobs:
   build:
     runs-on: ubuntu-latest
-  
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        cache: maven
-        
-    - name: Run browser
-    - uses: browser-actions/setup-chrome@latest
-    - run: chrome --version
-
- 
-  runner_test:
-      needs: build
-      runs-on: ubuntu-latest
-      steps:
-      
-        if: ${{ inputs.tags_in_scenario == true }}
-      - name: Build with Maven
-        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check 
-
-        if: ${{ inputs.tags_in_scenario == false }}
-      - name: Build with Maven with tags
-        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
-          
-      - name: Test Report Generation
-        uses: actions/upload-artifact@v4
-        if: success() || failure()
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
-            name: Serenity Report                 
-            path: target/site/serenity/
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
 
-   
+      - name: Run browser
+        uses: browser-actions/setup-chrome@latest
+      - run: chrome --version
+
+  runner_test:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven if tags_in_scenario is true
+        if: ${{ inputs.tags_in_scenario }}
+        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
+
+      - name: Build with Maven with tags if tags_in_scenario is false
+        if: ${{ !inputs.tags_in_scenario }}
+        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
+
+      - name: Test Report Generation
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Serenity Report
+          path: target/site/serenity/
+
     
           
