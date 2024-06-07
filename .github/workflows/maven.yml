@@ -62,6 +62,12 @@ jobs:
         if: ${{ inputs.tags_in_scenario }}
         run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
 
+      
+
+  runner_test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ !inputs.tags_in_scenario }}
         run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
@@ -73,10 +79,6 @@ jobs:
           name: Serenity Report
           path: target/site/serenity/
 
-
-  #runner_test:
-    #needs: build
-    #runs-on: ubuntu-latest
 
     
     
