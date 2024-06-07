@@ -67,7 +67,7 @@ jobs:
         run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
   
       - name: Test Report Generation
-        if: always()
+        if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: Serenity Report
