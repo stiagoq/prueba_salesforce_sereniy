@@ -63,15 +63,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-          
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ inputs.tags_in_scenario }}
         run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
