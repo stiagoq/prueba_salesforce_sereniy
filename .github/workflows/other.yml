@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Cypress repository
         uses: actions/checkout@v4
         with:
-          repository: Demo_Cypress
+          repository: stiagoq/Demo_Cypress
           token: ${{ secrets.TOKEN }}
 
       - name: Checkout main repository
