@@ -9,40 +9,31 @@
 name: Serenity report other repository
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  repository_dispatch:
+    types: [trigger-serenity]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Cypress repository
+      - name: Checkout this repository
         uses: actions/checkout@v4
-        with:
-          repository: stiagoq/serenity_prueba_tyba
-          token: ${{ secrets.TOKEN }}
 
-      - name: Checkout main repository
-        uses: actions/checkout@v4
-        
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          
+
       - name: Set up browser
         uses: browser-actions/setup-chrome@latest
       - run: chrome --version
-       
+
       - name: Build with Maven
         run: mvn clean verify -Dtest=RunAllFeatures serenity:aggregate serenity:check  
-          
+
       - name: Test Report Generation
         uses: actions/upload-artifact@v4
         if: success() || failure()
