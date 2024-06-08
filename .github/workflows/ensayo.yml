@@ -1,43 +1,15 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-name: Serenity report other repository
+name: My Target Workflow
 
 on:
   repository_dispatch:
-    types: [on-demand-test]
-
+    types: [trigger-workflow]
+    
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout this repository
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Set up browser
-        uses: browser-actions/setup-chrome@latest
-
-      - name: Verify Chrome installation
-        run: chrome --version
-
-      - name: Build with Maven
-        run: mvn clean verify -Dtest=RunAllFeatures serenity:aggregate serenity:check  
-
-      - name: Test Report Generation
-        uses: actions/upload-artifact@v4
-        if: success() || failure()
-        with:
-          name: Serenity Report
-          path: target/site/serenity/
+          ref: ${{ github.event.client_payload.sha }}
