@@ -10,7 +10,7 @@ name: Serenity report other repository
 
 on:
   repository_dispatch:
-    types: [trigger-serenity]
+    types: [on-demand-test]
 
 jobs:
   build:
