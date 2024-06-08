@@ -9,6 +9,6 @@ public class TestData {
     public static final String TEXT_PROVINCE = "Province";
     public static final String TEXT_POSTAL_CODE = "Postal code";
     public static final String TEXT_COUNTRY = "Country";
-    public static final String TEXT_PHONE_EDITED = "Phone:";
+    public static final String TEXT_PHONE_EDITED = "Phone";
 
 }
