@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.sha }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
