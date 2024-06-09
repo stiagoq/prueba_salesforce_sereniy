@@ -1,14 +1,12 @@
-name: Receive repository dispatch event
-
+name: Repository Dispatch
 on:
-  # Listen to a repository dispatch event by the name of `dispatch-event`
   repository_dispatch:
-    types: [dispatch-event]
-  #workflow_dispatch:
-  
+    types: [my-event]
 jobs:
-  log:
+  myEvent:
     runs-on: ubuntu-latest
     steps:
-      - name: Event received
-        run: echo "Event received"
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.client_payload.ref }}
+      - run: echo ${{ github.event.client_payload.sha }}
