@@ -8,5 +8,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.client_payload.ref }}
-      - run: echo ${{ github.event.client_payload.sha }}
+          ref: ${{ github.event.client_payload.github.action }}
+      - run: echo ${{ github.event.client_payload.github.actor }}
