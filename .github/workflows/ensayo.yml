@@ -1,7 +1,6 @@
 name: Repository Dispatch
 on:
-  repository_dispatch:
-    types: [my_event_type]
+  workflow_dispatch:
 jobs:
   myEvent:
     runs-on: ubuntu-latest
@@ -11,4 +10,4 @@ jobs:
             fetch-depth: 0
       - run: |
           echo ${{ github.event.client_payload.github.actor }}
-          echo ${{ github.event.client_payload.github.action }}
+          echo ${{ github.event.client_payload.github.actI ion }}
