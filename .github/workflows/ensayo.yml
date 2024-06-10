@@ -10,4 +10,4 @@ jobs:
             fetch-depth: 0
       - run: |
           echo ${{ github.event.client_payload.github.actor }}
-          echo ${{ github.event.client_payload.github.actI ion }}
+          echo ${{ github.event.client_payload.github.action }}
