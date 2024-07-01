@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
 name: Serenity Tests in GitHub
 
 on:
@@ -22,7 +19,7 @@ on:
         type: boolean
 
       runnerTag:
-        description: "Prueba a correr"
+        description: "Tag de prueba a correr"
         required: true
         default: 'create'
         type: choice
@@ -35,63 +32,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      
-     
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'maven'
-          cache-dependency-path: 'sub-project/pom.xml' # optional
           
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-          
-      #- name: Cache Maven packages
-       # uses: actions/cache@v4
-        #with:
-         # path: ~/.m2/repository
-          #key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          #restore-keys: |
-           # ${{ runner.os }}-maven-
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+             ${{ runner.os }}-maven-
 
-      #- name: Build and create cache directory
-        #run: mvn dependency:go-offline
+      - name: Build and create cache directory
+        run: mvn dependency:go-offline --file path/to/pom.xml
+
+      - name: Build with Maven
+        run: mvn -B package --file path/to/pom.xml -DskipTests
 
       - name: Run browser
         uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
-      - name: Build with Maven if tags_in_scenario is true
+      - name: Run tests if tags_in_scenario is false
         if: ${{ !inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
-  
-      - name: Build with Maven with tags if tags_in_scenario is false
+        run: mvn clean verify -DfailIfNoTests=false -Dtest=${{ inputs.runner }} --file path/to/pom.xml serenity:aggregate serenity:check
+
+      - name: Run tests with tags if tags_in_scenario is true
         if: ${{ inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
-  
+        run: mvn clean verify -DfailIfNoTests=false -Dtags=${{ inputs.runnerTag }} --file path/to/pom.xml serenity:aggregate serenity:check
+
       - name: Test Report Generation
-        if: success() || failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Serenity Report
-          path: target/site/serenity/
-
-          
-  #runner_test:
-   # needs: build
-    #runs-on: ubuntu-latest
-
-
-      #- name: Cache Maven packages
-       # uses: actions/cache@v4
-        #with:
-         # path: ~/.m2/repository
-          #key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          #restore-keys: |
-           # ${{ runner.os }}-maven-
-
-      #- name: Build and create cache directory
-        #run: mvn dependency:go-offline
+          path: target/site/serenity
