@@ -60,6 +60,7 @@ jobs:
 
   runtest:
     needs: [build]
+    runs-on: ubuntu-latest
     steps:
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
