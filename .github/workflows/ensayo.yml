@@ -19,7 +19,7 @@ on:
         type: boolean
 
       runnerTag:
-        description: "Prueba a correr"
+        description: "Tag de prueba a correr"
         required: true
         default: 'create'
         type: choice
@@ -40,21 +40,20 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-
           
       - name: Cache Maven packages
-        uses: actions/cache@v4     
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+             ${{ runner.os }}-maven-
 
-      #- name: Build and create cache directory
-        #run: mvn dependency:go-offline
+      - name: Build and create cache directory
+        run: mvn dependency:go-offline
 
-      #- name: Build with Maven
-        #run: mvn -B package --file pom.xml
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
 
       - name: Run browser
         uses: browser-actions/setup-chrome@latest
@@ -62,19 +61,19 @@ jobs:
 
       - name: Run tests if tags_in_scenario is false
         if: ${{ !inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
+        run: mvn clean verify -DfailIfNoTests=false -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
 
       - name: Run tests with tags if tags_in_scenario is true
         if: ${{ inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
+        run: mvn clean verify -DfailIfNoTests=false -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
 
-  
       - name: Test Report Generation
-        if: success() || failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Serenity Report
           path: target/site/serenity
+
           
   #runner_test:
    # needs: build
