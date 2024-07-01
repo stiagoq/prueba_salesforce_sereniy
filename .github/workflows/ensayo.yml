@@ -53,10 +53,10 @@ jobs:
         uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
-  runner_test:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
+  #runner_test:
+    #needs: [build]
+    #runs-on: ubuntu-latest
+    #steps:
     
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
