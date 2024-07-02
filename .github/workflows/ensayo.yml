@@ -61,9 +61,7 @@ jobs:
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
         run: |
-          mvn clean verify -Dtest=${{ inputs.runner }} -DfailIfNoTests=false
-          serenity:aggregate 
-          serenity:check
+          mvn clean verify -Dtest=${{ inputs.runner }} -DfailIfNoTests=false | serenity:aggregate | serenity:check
   
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ inputs.tags_in_scenario }}
