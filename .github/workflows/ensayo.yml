@@ -50,6 +50,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+            
       - name: Build and create cache directory
         run: mvn dependency:go-offline
 
@@ -59,7 +60,10 @@ jobs:
 
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
+        run: |
+          mvn clean verify -Dtest=${{ inputs.runner }} 
+          serenity:aggregate 
+          serenity:check
   
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ inputs.tags_in_scenario }}
