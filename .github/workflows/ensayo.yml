@@ -1,3 +1,6 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
 name: Serenity Tests in GitHub
 
 on:
@@ -34,38 +37,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+     
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
-          java-version: '21'
           distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+          #cache-dependency-path: 'sub-project/pom.xml' # optional
           
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-            
-      - name: Build and create cache directory
-        run: mvn dependency:go-offline
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+          
+      #- name: Cache Maven packages
+       # uses: actions/cache@v4
+        #with:
+         # path: ~/.m2/repository
+          #key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          #restore-keys: |
+           # ${{ runner.os }}-maven-
+
+      #- name: Build and create cache directory
+        #run: mvn dependency:go-offline
 
       - name: Run browser
         uses: browser-actions/setup-chrome@latest
       - run: chrome --version
 
-      - name: Build with Maven if tags_in_scenario is false
+      - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
-        run: |
-          mvn -e -X clean verify -Dtest=${{ inputs.runner }} -DfailIfNoTests=false serenity:aggregate
-          mvn -e -X serenity:check
-
-      - name: Build with Maven with tags if tags_in_scenario is true
+        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
+  
+      - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ inputs.tags_in_scenario }}
-        run: |
-          mvn -e -X clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate
-          mvn -e -X serenity:check
+        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
   
       - name: Test Report Generation
         if: success() || failure()
