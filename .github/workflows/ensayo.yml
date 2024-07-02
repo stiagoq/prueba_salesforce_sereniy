@@ -59,16 +59,16 @@ jobs:
        # run: mvn -B package --file pom.xml
 
       - name: Build and create cache directory
-        run: mvn clean install -U
+        run: mvn clean install -U -DfailIfNoTests=false
 
 
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check -DfailIfNoTests=false 
+        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check  
   
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check -DfailIfNoTests=false 
+        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check  
   
       - name: Test Report Generation
         if: success() || failure()
