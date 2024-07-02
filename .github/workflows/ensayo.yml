@@ -9,10 +9,10 @@ on:
       runner:
         description: "Prueba a correr"
         required: true
-        default: 'RunnerAllFeatures'
+        default: 'RunAllFeatures'
         type: choice
         options:
-          - RunnerAllFeatures
+          - RunAllFeatures
           - RunCreateAccountFeature
           - RunEditAccountFeature
 
