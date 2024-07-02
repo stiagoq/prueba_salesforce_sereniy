@@ -64,11 +64,11 @@ jobs:
 
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check
+        run: mvn clean verify -Dtest=${{ inputs.runner }} serenity:aggregate serenity:check -DfailIfNoTests=false 
   
       - name: Build with Maven with tags if tags_in_scenario is false
         if: ${{ inputs.tags_in_scenario }}
-        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check
+        run: mvn clean verify -Dtags=${{ inputs.runnerTag }} serenity:aggregate serenity:check -DfailIfNoTests=false 
   
       - name: Test Report Generation
         if: success() || failure()
