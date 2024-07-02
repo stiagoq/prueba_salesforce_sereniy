@@ -16,7 +16,7 @@ public class MyChromeDriver {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--detach");
         options.addArguments("--aggressive-cache-discard");
-        //options.addArguments("--headless");
+        options.addArguments("--headless");
 
         chromeDriver = new ChromeDriver(options);
         return new MyChromeDriver();
