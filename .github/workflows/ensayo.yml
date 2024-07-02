@@ -59,7 +59,8 @@ jobs:
        # run: mvn -B package --file pom.xml
 
       - name: Build and create cache directory
-        run: mvn dependency:go-offline
+        run: mvn clean install -U
+
 
       - name: Build with Maven if tags_in_scenario is true
         if: ${{ !inputs.tags_in_scenario }}
