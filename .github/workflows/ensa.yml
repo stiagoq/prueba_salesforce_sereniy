@@ -19,23 +19,24 @@ jobs:
         echo "Running initial tasks..."
         # Aquí puedes poner el código que necesitas ejecutar antes de la intervención
 
-    - name: Pause for manual intervention
-      id: pause
-      run: |
-        echo "Manual intervention required. Please approve to continue."
-        echo "::notice::Pause for manual intervention. Please approve to continue."
-        echo "::set-output name=status::paused"
+    - name: Request manual approval
+      uses: actions/stale@v3.0.19
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        stale-issue-message: 'Manual approval required'
+        days-before-stale: 0
+        days-before-close: -1
+        only-labels: approval
 
-    - name: Wait for approval
-      if: steps.pause.outputs.status == 'paused'
-      run: |
-        echo "Waiting for manual approval..."
-        # Espera activa simulada (10 minutos)
-        sleep 600
+    - name: Pause for manual approval
+      uses: actions/wait-for-approval@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        APPROVAL_LABEL: 'approved'
 
     - name: Continue after approval
-      if: steps.pause.outputs.status == 'paused'
+      if: success()
       run: |
         echo "Continuing the workflow after manual approval."
         # Aquí puedes poner el código que necesitas ejecutar después de la intervención
-
