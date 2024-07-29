@@ -20,15 +20,21 @@ jobs:
         # Aquí puedes poner el código que necesitas ejecutar antes de la intervención
 
     - name: Pause for manual intervention
+      id: pause
       run: |
         echo "Manual intervention required. Please approve to continue."
         echo "::notice::Pause for manual intervention. Please approve to continue."
+        echo "::set-output name=status::paused"
 
-    - name: Approval required
-      if: success()
-      uses: actions/pause-for-approval@v1
+    - name: Wait for approval
+      if: steps.pause.outputs.status == 'paused'
+      run: |
+        echo "Waiting for manual approval..."
+        # Espera activa simulada (10 minutos)
+        sleep 600
 
     - name: Continue after approval
+      if: steps.pause.outputs.status == 'paused'
       run: |
         echo "Continuing the workflow after manual approval."
         # Aquí puedes poner el código que necesitas ejecutar después de la intervención
