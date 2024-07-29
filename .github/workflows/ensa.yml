@@ -19,12 +19,17 @@ jobs:
         echo "Running initial tasks..."
         # Aquí puedes poner el código que necesitas ejecutar antes de la intervención
 
-    - name: Request approval
-      run: echo "Requesting manual approval..."
-      environment: manual-approval
+  approval:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: manual-approval
+
+    steps:
+    - name: Awaiting approval
+      run: echo "Awaiting manual approval..."
 
   continue:
-    needs: build
+    needs: approval
     runs-on: ubuntu-latest
 
     steps:
