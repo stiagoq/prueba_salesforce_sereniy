@@ -20,15 +20,15 @@ jobs:
         # Aquí puedes poner el código que necesitas ejecutar antes de la intervención
 
     - name: Request approval
-      run: |
-        echo "Requesting manual approval..."
-        echo "::pause::Awaiting manual approval"
+      run: echo "Requesting manual approval..."
+      environment: manual-approval
 
-  manual_approval:
+  continue:
     needs: build
     runs-on: ubuntu-latest
-    environment: manual-approval
 
     steps:
-    - name: Approval granted
-      run: echo "Manual approval granted, resuming workflow..."
+    - name: Continue after approval
+      run: |
+        echo "Continuing the workflow after manual approval."
+        # Aquí puedes poner el código que necesitas ejecutar después de la intervención
