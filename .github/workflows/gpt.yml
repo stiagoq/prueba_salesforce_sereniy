@@ -4,6 +4,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  #id-token: write
+  pull-requests: write
+  contents: read
+  actions: read
+
 jobs:
   code_review:
     runs-on: ubuntu-latest
@@ -17,4 +23,6 @@ jobs:
         uses: mattzcarey/code-review-gpt@v0.1.10
         with:
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-          pr_comment: true
+          MODEL: 'gpt-4o'
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          #pr_comment: true
