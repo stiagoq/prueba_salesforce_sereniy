@@ -22,7 +22,7 @@ jobs:
         id: git-diff
         with:
           raw_diff_file_output: diff.txt
-          file_output_only: "true" # Makes us exclude printing the diff on the console for security purposes
+          file_output_only: "true" # Exclude printing the diff on the console for security purposes
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -78,13 +78,13 @@ jobs:
 
       - name: Add Code Suggestions Comment
         run: |
-          # Leer el contenido de los comentarios generados
+          # Read the content of the generated comments
           comments=$(cat code_suggestions.txt)
           
-          # Escapar los comentarios para que sean JSON válidos
+          # Escape the comments to be valid JSON
           escaped_comments=$(echo "$comments" | jq -s -R -r @json)
           
-          # Hacer una solicitud POST para agregar un comentario en el PR
+          # Make a POST request to add a comment on the PR
           curl -s -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
