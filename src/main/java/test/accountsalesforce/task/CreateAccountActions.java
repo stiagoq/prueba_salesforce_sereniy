@@ -40,7 +40,7 @@ public class CreateAccountActions implements Task {
                 Scroll.to(AccountPage.BUTTON_LIST_TYPE_ROLE),
                 Click.on(AccountPage.BUTTON_LIST_TYPE_ROLE),
                 WaitUntil.the(AccountPage.BUTTON_SELECT_TYPE_ROLE, WebElementStateMatchers.isVisible())
-                )
+                );
 
         listSelectType = BrowseTheWeb.as(actor).findAll(AccountPage.BUTTON_SELECT_TYPE_ROLE);
         int randomNumber = RandomData.getRandomNumber(1, listSelectType.size());
