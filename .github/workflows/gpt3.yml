@@ -1,0 +1,94 @@
+name: GPT Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  code_review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.1
+        with:
+          fetch-depth: 0
+          
+      - name: git-diff-action
+        uses: GrantBirki/git-diff-action@v2.7.0 # A GitHub action for gathering the git diff of our pull request
+        id: git-diff
+        with:
+          raw_diff_file_output: diff.txt
+          file_output_only: "true" # Exclude printing the diff on the console for security purposes
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch transformers
+
+      - name: Perform Code Review With GPT-Neo
+        id: code_review_suggestions
+        run: |
+          # Get the code changes
+          changed_code=$(cat ${{steps.git-diff.outputs.raw-diff-path}})
+          
+          echo "PR Changes $changed_code"
+          
+          # Python script to run GPT-Neo and perform the code review
+          echo "
+          
+          import torch
+          from transformers import AutoModelForCausalLM, AutoTokenizer
+          
+          # Load GPT-Neo model and tokenizer
+          model = AutoModelForCausalLM.from_pretrained('EleutherAI/gpt-neo-1.3B')
+          tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-1.3B')
+          
+          # Prepare the prompt
+          prompt = \"${{ vars.CODE_REVIEW_PROMPT }}\"
+          code = \"\"\"${changed_code}\"\"\"
+          input_text = prompt + code
+          
+          # Tokenize and process in chunks if input length exceeds 1024 tokens
+          input_ids = tokenizer.encode(input_text, return_tensors='pt')
+          max_input_length = 1024
+          if input_ids.shape[1] > max_input_length:
+              input_ids = input_ids[:, :max_input_length]
+              
+          # Generate the response using max_new_tokens instead of max_length
+          outputs = model.generate(input_ids, max_new_tokens=512)
+          
+          # Decode the response
+          response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+          print(response)
+          " > code_review.py
+          
+          python code_review.py > code_suggestions.txt
+
+      - name: Output Code Review Suggestions
+        run: cat code_suggestions.txt
+
+      - name: Add Code Suggestions Comment
+        run: |
+          # Read the content of the generated comments
+          comments=$(cat code_suggestions.txt)
+          
+          # Escape the comments to be valid JSON
+          escaped_comments=$(echo "$comments" | jq -s -R -r @json)
+          
+          # Make a POST request to add a comment on the PR
+          curl -s -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" \
+            -d "{\"body\": $escaped_comments}"
