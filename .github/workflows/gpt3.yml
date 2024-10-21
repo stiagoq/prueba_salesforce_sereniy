@@ -47,18 +47,23 @@ jobs:
           
           import torch
           from transformers import AutoModelForCausalLM, AutoTokenizer
-          
+
           # Load GPT-Neo model and tokenizer
           model = AutoModelForCausalLM.from_pretrained('EleutherAI/gpt-neo-1.3B')
           tokenizer = AutoTokenizer.from_pretrained('EleutherAI/gpt-neo-1.3B')
-          
+
           # Prepare the prompt
           prompt = \"${{ vars.CODE_REVIEW_PROMPT }}\"
           code = \"\"\"${changed_code}\"\"\"
           input_text = prompt + code
-          
-          # Tokenize and generate the response
+
+          # Tokenize and process in chunks if input length exceeds 1024 tokens
           input_ids = tokenizer.encode(input_text, return_tensors='pt')
+          max_input_length = 1024
+          if input_ids.shape[1] > max_input_length:
+              input_ids = input_ids[:, :max_input_length]
+
+          # Generate the response
           outputs = model.generate(input_ids, max_length=1024)
           
           # Decode the response
@@ -67,6 +72,7 @@ jobs:
           " > code_review.py
 
           python code_review.py > code_suggestions.txt
+
 
       - name: Output Code Review Suggestions
         run: cat code_suggestions.txt
