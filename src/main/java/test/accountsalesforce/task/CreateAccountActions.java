@@ -37,8 +37,8 @@ public class CreateAccountActions implements Task {
                 SendKeys.of(RandomData.getRandomString(TEXT_PROVINCE)).into(AccountPage.INPUT_SHIPPING_PROVINCE),
                 SendKeys.of(RandomData.getRandomString(TEXT_POSTAL_CODE)).into(AccountPage.INPUT_SHIPPING_POSTALCODE),
                 SendKeys.of(RandomData.getRandomString(TEXT_COUNTRY)).into(AccountPage.INPUT_SHIPPING_COUNTRY),
-                Scroll.to(AccountPage.BUTTON_LIST_TYPE_ROLE)
-                Click.on(AccountPage.BUTTON_LIST_TYPE_ROLE)
+                Scroll.to(AccountPage.BUTTON_LIST_TYPE_ROLE),
+                Click.on(AccountPage.BUTTON_LIST_TYPE_ROLE),
                 WaitUntil.the(AccountPage.BUTTON_SELECT_TYPE_ROLE, WebElementStateMatchers.isVisible())
                 )
 
